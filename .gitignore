@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Configuração local e segredos
+.env
+*.pem
+*.key
+credentials*.json
+
+# Dados e modelos ficam no S3, não no git
+dados/
+data/
+saidas/
+*.csv
+*.parquet
+*.h5
+*.nc
+*.pkl
+*.joblib
+*.ubj
+*.zip

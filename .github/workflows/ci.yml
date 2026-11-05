@@ -1,0 +1,26 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Procurar segredos (gitleaks)
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.28.0 dir /repo --no-banner --redact
+      - uses: actions/setup-python@v5
+        if: hashFiles('pyproject.toml', 'requirements.txt') != ''
+        with:
+          python-version: "3.12"
+      - name: Lint e testes
+        if: hashFiles('pyproject.toml', 'requirements.txt') != ''
+        run: |
+          pip install ruff pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f pyproject.toml ]; then pip install -e .; fi
+          ruff check .
+          if ls tests/test_*.py >/dev/null 2>&1; then pytest -q; fi
